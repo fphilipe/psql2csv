@@ -7,7 +7,7 @@
 Grab the file `psql2csv`, put in somewhere in your `$PATH`, and make it
 executable:
 
-    $ curl https://raw.githubusercontent.com/fphilipe/psql2csv/v0.1/psql2csv > /usr/local/bin/psql2csv && chmod +x /usr/local/bin/psql2csv
+    $ curl https://raw.githubusercontent.com/fphilipe/psql2csv/v0.2/psql2csv > /usr/local/bin/psql2csv && chmod +x /usr/local/bin/psql2csv
 
 ## Usage
 
