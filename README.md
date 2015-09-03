@@ -2,7 +2,7 @@
 
 **Run a query in psql and output the result as CSV.**
 
-## Usage:
+## Usage
 
     psql2csv [OPTIONS] < QUERY
     psql2csv [OPTIONS] QUERY
