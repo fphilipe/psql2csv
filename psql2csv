@@ -1,0 +1,65 @@
+#!/bin/sh
+
+function usage() {
+  echo 'psql2csv: Run a query in psql and output the result as CSV.'
+  echo
+  echo 'Usage:'
+  echo '  psql2csv [OPTIONS] < QUERY'
+  echo '  psql2csv [OPTIONS] QUERY'
+  echo
+  echo 'OPTIONS:'
+  echo '  The query is assumed to be the contents of STDIN, if present, or the last argument.'
+  echo '  All other arguments are forwarded to psql except for these:'
+  echo
+  echo '  -h, --help           show this help, then exit'
+  echo '  --encoding=ENCODING  use a different encoding than UTF8 (Excel likes LATIN1)'
+  echo '  --no-header          do not output a header'
+  echo
+  echo 'Example usage:'
+  echo
+  echo '  $ psql2csv dbname --query "select * from table" > data.csv'
+  echo
+  echo '  $ < query.sql psql2csv dbname > data.csv'
+  echo
+  echo '  $ cat <<sql | psql2csv --no-header --encoding=latin1 dbname'
+  echo '  > SELECT *'
+  echo '  > FROM some_table'
+  echo '  > WHERE some_condition'
+  echo '  > LIMIT 10'
+  echo '  > sql'
+  echo
+  echo 'Author: Philipe Fatio <me@phili.pe>, http://phili.pe/, @fphilipe'
+
+  exit 1
+}
+
+if [ -t 0 ]; then
+  # STDIN not open, thus the query is the last argument.
+  QUERY=${@:$#}
+  STOP=1
+  [ $# -eq 0 ] && usage
+else
+  # Read query from STDIN.
+  QUERY=$(cat)
+  STOP=0
+fi
+
+QUERY=$(echo "$QUERY" | sed 's/;[[:space:]]*$//')
+HEADER=true
+ENCODING=UTF8
+PSQL_ARGS=()
+
+while [ $# -gt $STOP ]
+do
+  case "$1" in
+    --help|-h)    usage;;
+    --no-header)  HEADER=false;       shift;;
+    --encoding)   ENCODING="$2";      shift 2;;
+    --encoding=*) ENCODING="${1#*=}"; shift;;
+    *)            PSQL_ARGS+=($1);      shift;;
+  esac
+done
+
+COMMAND="\\copy ($QUERY) TO STDOUT WITH (FORMAT csv, HEADER $HEADER, ENCODING '$ENCODING')"
+
+psql --command="$COMMAND" $PSQL_ARGS
