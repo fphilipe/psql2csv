@@ -29,36 +29,31 @@ function usage() {
   echo '  > sql'
   echo
   echo 'Author: Philipe Fatio <me@phili.pe>, http://phili.pe/, @fphilipe'
-
-  exit 1
 }
-
-if [ -t 0 ]; then
-  # STDIN not open, thus the query is the last argument.
-  QUERY=${@:$#}
-  STOP=1
-  [ $# -eq 0 ] && usage
-else
-  # Read query from STDIN.
-  QUERY=$(cat)
-  STOP=0
-fi
 
 QUERY=$(echo "$QUERY" | sed 's/;[[:space:]]*$//')
 HEADER=true
 ENCODING=UTF8
 PSQL_ARGS=()
 
-while [ $# -gt $STOP ]
+while [ $# -gt 0 ]
 do
   case "$1" in
-    --help|-h)    usage;;
+    --help|-h)    usage; exit;;
     --no-header)  HEADER=false;       shift;;
     --encoding)   ENCODING="$2";      shift 2;;
     --encoding=*) ENCODING="${1#*=}"; shift;;
-    *)            PSQL_ARGS+=($1);      shift;;
+    *)            PSQL_ARGS+=("$1");  shift;;
   esac
 done
+
+if [ -t 0 ]; then # STDIN not open, thus the query is the last argument.
+  [ ${#PSQL_ARGS} -eq 0 ] && usage && exit 1
+  QUERY=${PSQL_ARGS[@]: -1}
+  unset PSQL_ARGS[${#PSQL_ARGS[@]}-1]
+else # Read query from STDIN.
+  QUERY=$(cat)
+fi
 
 COMMAND="\\copy ($QUERY) TO STDOUT WITH (FORMAT csv, HEADER $HEADER, ENCODING '$ENCODING')"
 
