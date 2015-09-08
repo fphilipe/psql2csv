@@ -31,7 +31,6 @@ function usage() {
   echo 'Author: Philipe Fatio <me@phili.pe>, http://phili.pe/, @fphilipe'
 }
 
-QUERY=$(echo "$QUERY" | sed 's/;[[:space:]]*$//')
 HEADER=true
 ENCODING=UTF8
 PSQL_ARGS=()
@@ -55,6 +54,7 @@ else # Read query from STDIN.
   QUERY=$(cat)
 fi
 
+QUERY=$(echo "$QUERY" | sed 's/;[[:space:]]*$//')
 COMMAND="\\copy ($QUERY) TO STDOUT WITH (FORMAT csv, HEADER $HEADER, ENCODING '$ENCODING')"
 
 psql --command="$COMMAND" $PSQL_ARGS
