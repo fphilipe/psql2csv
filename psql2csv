@@ -55,6 +55,6 @@ else # Read query from STDIN.
 fi
 
 QUERY=$(echo "$QUERY" | sed 's/;[[:space:]]*$//')
-COMMAND="\\copy ($QUERY) TO STDOUT WITH (FORMAT csv, HEADER $HEADER, ENCODING '$ENCODING')"
+COMMAND="COPY ($QUERY) TO STDOUT WITH (FORMAT csv, HEADER $HEADER, ENCODING '$ENCODING')"
 
 psql --command="$COMMAND" $PSQL_ARGS
