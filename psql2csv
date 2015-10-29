@@ -17,11 +17,11 @@ function usage() {
   echo
   echo 'Example usage:'
   echo
-  echo '  $ psql2csv dbname --query "select * from table" > data.csv'
+  echo '  $ psql2csv dbname "select * from table" > data.csv'
   echo
-  echo '  $ < query.sql psql2csv dbname > data.csv'
+  echo '  $ psql2csv dbname < query.sql > data.csv'
   echo
-  echo '  $ cat <<sql | psql2csv --no-header --encoding=latin1 dbname'
+  echo '  $ psql2csv --no-header --encoding=latin1 dbname <<sql'
   echo '  > SELECT *'
   echo '  > FROM some_table'
   echo '  > WHERE some_condition'
