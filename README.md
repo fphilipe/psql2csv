@@ -25,11 +25,11 @@ argument. All other arguments are forwarded to psql except for these:
 
 ## Example Usage
 
-    $ psql2csv dbname --query "select * from table" > data.csv
+    $ psql2csv dbname "select * from table" > data.csv
 
-    $ < query.sql psql2csv dbname > data.csv
+    $ psql2csv dbname < query.sql > data.csv
 
-    $ cat <<sql | psql2csv --no-header --encoding=latin1 dbname
+    $ psql2csv --no-header --encoding=latin1 dbname <<sql
     > SELECT *
     > FROM some_table
     > WHERE some_condition
