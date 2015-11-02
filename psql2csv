@@ -57,4 +57,4 @@ fi
 QUERY=$(echo "$QUERY" | sed 's/;[[:space:]]*$//')
 COMMAND="COPY ($QUERY) TO STDOUT WITH (FORMAT csv, HEADER $HEADER, ENCODING '$ENCODING')"
 
-psql --command="$COMMAND" $PSQL_ARGS
+psql --command="$COMMAND" ${PSQL_ARGS[@]}
