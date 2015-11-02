@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 function usage() {
   echo 'psql2csv: Run a query in psql and output the result as CSV.'
