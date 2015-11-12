@@ -15,6 +15,7 @@ function usage() {
   echo
   echo '  -?, --help             show this help, then exit'
   echo '  --delimiter=DELIMITER  use a different delimiter than comma (e.g. $'"'\\t'"' for tab)'
+  echo '  --null=NULL            specify a string that represents a NULL value (defaults to nothing)'
   echo '  --encoding=ENCODING    use a different encoding than UTF8 (Excel likes LATIN1)'
   echo '  --no-header            do not output a header'
   echo '  --dry-run              print the query that would be run without running it'
@@ -43,6 +44,7 @@ function escape() {
 DRY_RUN=false
 HEADER=true
 DELIMITER=,
+NULL=
 ENCODING=UTF8
 PSQL_ARGS=()
 
@@ -54,6 +56,8 @@ do
     --no-header)   HEADER=false;        shift;;
     --delimiter)   DELIMITER="$2";      shift 2;;
     --delimiter=*) DELIMITER="${1#*=}"; shift;;
+    --null)        NULL="$2";           shift 2;;
+    --null=*)      NULL="${1#*=}";      shift;;
     --encoding)    ENCODING="$2";       shift 2;;
     --encoding=*)  ENCODING="${1#*=}";  shift;;
     *)             PSQL_ARGS+=("$1");   shift;;
@@ -79,6 +83,7 @@ COPY ($QUERY) TO STDOUT WITH (\
 FORMAT csv, \
 HEADER $HEADER, \
 DELIMITER '$(escape "$DELIMITER")', \
+NULL '$(escape "$NULL")', \
 ENCODING '$(escape "$ENCODING")'\
 )"
 

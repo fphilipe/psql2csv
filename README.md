@@ -29,6 +29,7 @@ argument. All other arguments are forwarded to psql except for these:
 
     -h, --help             show this help, then exit
     --delimiter=DELIMITER  use a different delimiter than comma (e.g. $'\t' for tab)
+    --null=NULL            specify a string that represents a NULL value (defaults to nothing)
     --encoding=ENCODING    use a different encoding than UTF8 (Excel likes LATIN1)
     --no-header            do not output a header
     --dry-run              print the query that would be run without running it
