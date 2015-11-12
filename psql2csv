@@ -32,6 +32,11 @@ function usage() {
   echo 'Author: Philipe Fatio <me@phili.pe>, http://phili.pe/, @fphilipe'
 }
 
+# Escapes single quotes, necessary in SQL strings.
+function escape() {
+  echo "${1//\'/''}"
+}
+
 HEADER=true
 DELIMITER=,
 ENCODING=UTF8
@@ -59,6 +64,6 @@ else # Read query from STDIN.
 fi
 
 QUERY=$(echo "$QUERY" | sed 's/;[[:space:]]*$//')
-COMMAND="COPY ($QUERY) TO STDOUT WITH (FORMAT csv, HEADER $HEADER, DELIMITER '$DELIMITER', ENCODING '$ENCODING')"
+COMMAND="COPY ($QUERY) TO STDOUT WITH (FORMAT csv, HEADER $HEADER, DELIMITER '$(escape "$DELIMITER")', ENCODING '$(escape "$ENCODING")')"
 
 psql --command="$COMMAND" ${PSQL_ARGS[@]}
