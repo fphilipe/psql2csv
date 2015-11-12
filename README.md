@@ -19,9 +19,10 @@ executable:
 The query is assumed to be the contents of STDIN, if present, or the last
 argument. All other arguments are forwarded to psql except for these:
 
-    -h, --help           show this help, then exit
-    --encoding=ENCODING  use a different encoding than UTF8 (Excel likes LATIN1)
-    --no-header          do not output a header
+    -h, --help             show this help, then exit
+    --delimiter=DELIMITER  use a different delimiter than comma (e.g. $'\t' for tab)
+    --encoding=ENCODING    use a different encoding than UTF8 (Excel likes LATIN1)
+    --no-header            do not output a header
 
 ## Example Usage
 
@@ -29,7 +30,7 @@ argument. All other arguments are forwarded to psql except for these:
 
     $ psql2csv dbname < query.sql > data.csv
 
-    $ psql2csv --no-header --encoding=latin1 dbname <<sql
+    $ psql2csv --no-header --delimiter=$'\t' --encoding=latin1 dbname <<sql
     > SELECT *
     > FROM some_table
     > WHERE some_condition

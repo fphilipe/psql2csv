@@ -12,7 +12,7 @@ function usage() {
   echo '  All other arguments are forwarded to psql except for these:'
   echo
   echo '  -h, --help             show this help, then exit'
-  echo '  --delimiter=DELIMITER  use a different delimiter than , (comma) (e.g. $'"'\\t'"' for TAB)'
+  echo '  --delimiter=DELIMITER  use a different delimiter than comma (e.g. $'"'\\t'"' for tab)'
   echo '  --encoding=ENCODING    use a different encoding than UTF8 (Excel likes LATIN1)'
   echo '  --no-header            do not output a header'
   echo
