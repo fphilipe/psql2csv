@@ -11,9 +11,10 @@ function usage() {
   echo '  The query is assumed to be the contents of STDIN, if present, or the last argument.'
   echo '  All other arguments are forwarded to psql except for these:'
   echo
-  echo '  -h, --help           show this help, then exit'
-  echo '  --encoding=ENCODING  use a different encoding than UTF8 (Excel likes LATIN1)'
-  echo '  --no-header          do not output a header'
+  echo '  -h, --help             show this help, then exit'
+  echo '  --delimiter=DELIMITER  use a different delimiter than , (comma) (e.g. $'"'\\t'"' for TAB)'
+  echo '  --encoding=ENCODING    use a different encoding than UTF8 (Excel likes LATIN1)'
+  echo '  --no-header            do not output a header'
   echo
   echo 'Example usage:'
   echo
@@ -21,7 +22,7 @@ function usage() {
   echo
   echo '  $ psql2csv dbname < query.sql > data.csv'
   echo
-  echo '  $ psql2csv --no-header --encoding=latin1 dbname <<sql'
+  echo '  $ psql2csv --no-header --delimiter=$'"'\\t'"' --encoding=latin1 dbname <<sql'
   echo '  > SELECT *'
   echo '  > FROM some_table'
   echo '  > WHERE some_condition'
@@ -32,17 +33,20 @@ function usage() {
 }
 
 HEADER=true
+DELIMITER=,
 ENCODING=UTF8
 PSQL_ARGS=()
 
 while [ $# -gt 0 ]
 do
   case "$1" in
-    --help|-h)    usage; exit;;
-    --no-header)  HEADER=false;       shift;;
-    --encoding)   ENCODING="$2";      shift 2;;
-    --encoding=*) ENCODING="${1#*=}"; shift;;
-    *)            PSQL_ARGS+=("$1");  shift;;
+    --help|-h)     usage; exit;;
+    --no-header)   HEADER=false;        shift;;
+    --delimiter)   DELIMITER="$2";      shift 2;;
+    --delimiter=*) DELIMITER="${1#*=}"; shift;;
+    --encoding)    ENCODING="$2";       shift 2;;
+    --encoding=*)  ENCODING="${1#*=}";  shift;;
+    *)             PSQL_ARGS+=("$1");   shift;;
   esac
 done
 
@@ -55,6 +59,6 @@ else # Read query from STDIN.
 fi
 
 QUERY=$(echo "$QUERY" | sed 's/;[[:space:]]*$//')
-COMMAND="COPY ($QUERY) TO STDOUT WITH (FORMAT csv, HEADER $HEADER, ENCODING '$ENCODING')"
+COMMAND="COPY ($QUERY) TO STDOUT WITH (FORMAT csv, HEADER $HEADER, DELIMITER '$DELIMITER', ENCODING '$ENCODING')"
 
 psql --command="$COMMAND" ${PSQL_ARGS[@]}
