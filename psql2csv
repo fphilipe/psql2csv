@@ -74,7 +74,13 @@ fi
 # Replace trailing semicolons. sed needs at least two lines with the given
 # arguments, otherwise the query ends up empty.
 QUERY="$((echo "$QUERY"; echo) | sed -E -e ':a' -e 'N' -e '$!ba' -e '$s/([[:space:]]*;+[[:space:]]*)+$//')"
-COMMAND="COPY ($QUERY) TO STDOUT WITH (FORMAT csv, HEADER $HEADER, DELIMITER '$(escape "$DELIMITER")', ENCODING '$(escape "$ENCODING")')"
+COMMAND="\
+COPY ($QUERY) TO STDOUT WITH (\
+FORMAT csv, \
+HEADER $HEADER, \
+DELIMITER '$(escape "$DELIMITER")', \
+ENCODING '$(escape "$ENCODING")'\
+)"
 
 if [ "$DRY_RUN" = true ]
 then echo "$COMMAND"
