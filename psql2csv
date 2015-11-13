@@ -13,14 +13,15 @@ function usage() {
   echo '  The query is assumed to be the contents of STDIN, if present, or the last argument.'
   echo '  All other arguments are forwarded to psql except for these:'
   echo
-  echo '  -?, --help             show this help, then exit'
-  echo '  --delimiter=DELIMITER  set the field delimiter (default: ,)'
-  echo '  --quote=QUOTE          set the quote delimiter (default: ")'
-  echo '  --escape=ESCAPE        set the escape character (default: QUOTE)'
-  echo '  --null=NULL            set the string representing NULL; printed without quotes (default: empty string)'
-  echo '  --encoding=ENCODING    set the output encoding; Excel likes latin1 (default: UTF8)'
-  echo '  --no-header            do not output a header'
-  echo '  --dry-run              print the COPY statement that would be run without actually running it'
+  echo '  -?, --help                 show this help, then exit'
+  echo '  --delimiter=DELIMITER      set the field delimiter (default: ,)'
+  echo '  --quote=QUOTE              set the quote delimiter (default: ")'
+  echo '  --escape=ESCAPE            set the escape character (default: QUOTE)'
+  echo '  --null=NULL                set the string representing NULL; printed without quotes (default: empty string)'
+  echo '  --force-quote=FORCE_QUOTE  set the columns to be force quoted; comma separated list of columns or * for all (default: none)'
+  echo '  --encoding=ENCODING        set the output encoding; Excel likes latin1 (default: UTF8)'
+  echo '  --no-header                do not output a header'
+  echo '  --dry-run                  print the COPY statement that would be run without actually running it'
   echo
   echo 'Example usage:'
   echo
@@ -51,20 +52,22 @@ PSQL_ARGS=()
 while [ $# -gt 0 ]
 do
   case "$1" in
-    --help|-?)     usage; exit;;
-    --dry-run)     DRY_RUN=true;                     shift;;
-    --no-header)   HEADER=false;                     shift;;
-    --delimiter)   DELIMITER="$2";                   shift 2;;
-    --delimiter=*) DELIMITER="${1#*=}";              shift;;
-    --null)        NULL="$2";                        shift 2;;
-    --null=*)      NULL="${1#*=}";                   shift;;
-    --quote)       QUOTE="$2";      ESCAPE="$QUOTE"; shift 2;;
-    --quote=*)     QUOTE="${1#*=}"; ESCAPE="$QUOTE"; shift;;
-    --escape)      ESCAPE="$2";                      shift 2;;
-    --escape=*)    ESCAPE="${1#*=}";                 shift;;
-    --encoding)    ENCODING="$2";                    shift 2;;
-    --encoding=*)  ENCODING="${1#*=}";               shift;;
-    *)             PSQL_ARGS+=("$1");                shift;;
+    --help|-?)       usage; exit;;
+    --dry-run)       DRY_RUN=true;                     shift;;
+    --no-header)     HEADER=false;                     shift;;
+    --delimiter)     DELIMITER="$2";                   shift 2;;
+    --delimiter=*)   DELIMITER="${1#*=}";              shift;;
+    --null)          NULL="$2";                        shift 2;;
+    --null=*)        NULL="${1#*=}";                   shift;;
+    --quote)         QUOTE="$2";      ESCAPE="$QUOTE"; shift 2;;
+    --quote=*)       QUOTE="${1#*=}"; ESCAPE="$QUOTE"; shift;;
+    --escape)        ESCAPE="$2";                      shift 2;;
+    --escape=*)      ESCAPE="${1#*=}";                 shift;;
+    --force-quote)   FORCE_QUOTE="$2";                 shift 2;;
+    --force-quote=*) FORCE_QUOTE="${1#*=}";            shift;;
+    --encoding)      ENCODING="$2";                    shift 2;;
+    --encoding=*)    ENCODING="${1#*=}";               shift;;
+    *)               PSQL_ARGS+=("$1");                shift;;
   esac
 done
 
@@ -99,6 +102,13 @@ fi
 # Only specify the QUOTE option when it's set and not the same as ESCAPE.
 if ! [ -z "$ESCAPE" ] && [ "$ESCAPE" != "$QUOTE" ]; then
   OPTIONS="$OPTIONS, ESCAPE '$(escape "$ESCAPE")'"
+fi
+# Only specify the FORCE_QUOTE option when it's set.
+if ! [ -z "$FORCE_QUOTE" ]; then
+  if [ "$FORCE_QUOTE" != "*" ]; then
+    FORCE_QUOTE="($FORCE_QUOTE)"
+  fi
+  OPTIONS="$OPTIONS, FORCE_QUOTE $FORCE_QUOTE"
 fi
 
 # Replace trailing semicolons. sed needs at least two lines with the given
