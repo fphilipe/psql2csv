@@ -28,13 +28,13 @@ The query is assumed to be the contents of STDIN, if present, or the last
 argument. All other arguments are forwarded to psql except for these:
 
     -h, --help             show this help, then exit
-    --delimiter=DELIMITER  use a different delimiter than comma (e.g. $'\t' for tab)
-    --quote=QUOTE          which quoting character to use (defaults to double-quote)
-    --escape=ESCAPE        which escape character to use (defaults to QUOTE)
-    --null=NULL            specify a string that represents a NULL value (defaults to nothing)
-    --encoding=ENCODING    use a different encoding than UTF8 (Excel likes LATIN1)
+    --delimiter=DELIMITER  set the field delimiter (default: ,)
+    --quote=QUOTE          set the quote delimiter (default: ")
+    --escape=ESCAPE        set the escape character (default: QUOTE)
+    --null=NULL            set the string representing NULL; printed without quotes (default: empty string)
+    --encoding=ENCODING    set the output encoding; Excel likes latin1 (default: UTF8)
     --no-header            do not output a header
-    --dry-run              print the query that would be run without running it
+    --dry-run              print the COPY statement that would be run without actually running it
 
 ## Example Usage
 

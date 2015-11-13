@@ -14,13 +14,13 @@ function usage() {
   echo '  All other arguments are forwarded to psql except for these:'
   echo
   echo '  -?, --help             show this help, then exit'
-  echo '  --delimiter=DELIMITER  use a different delimiter than comma (e.g. $'"'\\t'"' for tab)'
-  echo '  --quote=QUOTE          which quoting character to use (defaults to double-quote)'
-  echo '  --escape=ESCAPE        which escape character to use (defaults to QUOTE)'
-  echo '  --null=NULL            specify a string that represents a NULL value (defaults to nothing)'
-  echo '  --encoding=ENCODING    use a different encoding than UTF8 (Excel likes LATIN1)'
+  echo '  --delimiter=DELIMITER  set the field delimiter (default: ,)'
+  echo '  --quote=QUOTE          set the quote delimiter (default: ")'
+  echo '  --escape=ESCAPE        set the escape character (default: QUOTE)'
+  echo '  --null=NULL            set the string representing NULL; printed without quotes (default: empty string)'
+  echo '  --encoding=ENCODING    set the output encoding; Excel likes latin1 (default: UTF8)'
   echo '  --no-header            do not output a header'
-  echo '  --dry-run              print the query that would be run without running it'
+  echo '  --dry-run              print the COPY statement that would be run without actually running it'
   echo
   echo 'Example usage:'
   echo
