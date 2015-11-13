@@ -45,10 +45,6 @@ function escape() {
 
 DRY_RUN=false
 HEADER=true
-DELIMITER=,
-NULL=
-QUOTE='"'
-ESCAPE="$QUOTE"
 ENCODING=UTF8
 PSQL_ARGS=()
 
@@ -83,21 +79,35 @@ if [ -z "$QUERY" ]; then
   unset PSQL_ARGS[${#PSQL_ARGS[@]}-1]
 fi
 
+OPTIONS="FORMAT csv, ENCODING '$(escape "$ENCODING")'"
+# Only specify the HEADER option when the header should be printed.
+if [ "$HEADER" = true ]; then
+  OPTIONS="$OPTIONS, HEADER $HEADER"
+fi
+# Only specify the DELIMITER option when it's set and not the default.
+if ! [ -z "$DELIMITER" ] && [ "$DELIMITER" != "," ]; then
+  OPTIONS="$OPTIONS, DELIMITER '$(escape "$DELIMITER")'"
+fi
+# Only specify the NULL option when it's set and not the default (nothing).
+if ! [ -z "$NULL" ]; then
+  OPTIONS="$OPTIONS, NULL '$(escape "$NULL")'"
+fi
+# Only specify the QUOTE option when it's set and not the default.
+if ! [ -z "$QUOTE" ] && [ "$QUOTE" != '"' ]; then
+  OPTIONS="$OPTIONS, QUOTE '$(escape "$QUOTE")'"
+fi
+# Only specify the QUOTE option when it's set and not the same as ESCAPE.
+if ! [ -z "$ESCAPE" ] && [ "$ESCAPE" != "$QUOTE" ]; then
+  OPTIONS="$OPTIONS, ESCAPE '$(escape "$ESCAPE")'"
+fi
+
 # Replace trailing semicolons. sed needs at least two lines with the given
 # arguments, otherwise the query ends up empty.
 QUERY="$((echo "$QUERY"; echo) | sed -E -e ':a' -e 'N' -e '$!ba' -e '$s/([[:space:]]*;+[[:space:]]*)+$//')"
-COMMAND="\
-COPY ($QUERY) TO STDOUT WITH (\
-FORMAT csv, \
-HEADER $HEADER, \
-DELIMITER '$(escape "$DELIMITER")', \
-QUOTE '$(escape "$QUOTE")', \
-ESCAPE '$(escape "$ESCAPE")', \
-NULL '$(escape "$NULL")', \
-ENCODING '$(escape "$ENCODING")'\
-)"
+COMMAND="COPY ($QUERY) TO STDOUT WITH ($OPTIONS)"
 
-if [ "$DRY_RUN" = true ]
-then echo "$COMMAND"
-else psql --command="$COMMAND" ${PSQL_ARGS[@]}
+if [ "$DRY_RUN" = true ]; then
+  echo "$COMMAND"
+else
+  psql --command="$COMMAND" ${PSQL_ARGS[@]}
 fi
