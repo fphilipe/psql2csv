@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 function usage() {
   echo 'psql2csv: Run a query in psql and output the result as CSV.'
   echo
