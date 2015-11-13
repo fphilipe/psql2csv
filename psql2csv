@@ -36,6 +36,10 @@ function usage() {
   echo '  > LIMIT 10'
   echo '  > sql'
   echo
+  echo 'Further Help:'
+  echo
+  echo '  PostgreSQL COPY documentation: http://www.postgresql.org/docs/current/static/sql-copy.html'
+  echo
   echo 'Author: Philipe Fatio <me@phili.pe>, http://phili.pe/, @fphilipe'
 }
 

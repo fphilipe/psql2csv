@@ -50,6 +50,10 @@ argument. All other arguments are forwarded to psql except for these:
     > LIMIT 10
     > sql
 
+## Further Help
+
+- [PostgreSQL COPY documentation](http://www.postgresql.org/docs/current/static/sql-copy.html)
+
 ## Author
 
 Philipe Fatio ([@fphilipe](https://github.com/fphilipe))
