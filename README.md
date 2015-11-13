@@ -30,6 +30,7 @@ argument. All other arguments are forwarded to psql except for these:
     -h, --help             show this help, then exit
     --delimiter=DELIMITER  use a different delimiter than comma (e.g. $'\t' for tab)
     --quote=QUOTE          which quoting character to use (defaults to double-quote)
+    --escape=ESCAPE        which escape character to use (defaults to QUOTE)
     --null=NULL            specify a string that represents a NULL value (defaults to nothing)
     --encoding=ENCODING    use a different encoding than UTF8 (Excel likes LATIN1)
     --no-header            do not output a header

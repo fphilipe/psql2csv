@@ -16,6 +16,7 @@ function usage() {
   echo '  -?, --help             show this help, then exit'
   echo '  --delimiter=DELIMITER  use a different delimiter than comma (e.g. $'"'\\t'"' for tab)'
   echo '  --quote=QUOTE          which quoting character to use (defaults to double-quote)'
+  echo '  --escape=ESCAPE        which escape character to use (defaults to QUOTE)'
   echo '  --null=NULL            specify a string that represents a NULL value (defaults to nothing)'
   echo '  --encoding=ENCODING    use a different encoding than UTF8 (Excel likes LATIN1)'
   echo '  --no-header            do not output a header'
@@ -47,6 +48,7 @@ HEADER=true
 DELIMITER=,
 NULL=
 QUOTE='"'
+ESCAPE="$QUOTE"
 ENCODING=UTF8
 PSQL_ARGS=()
 
@@ -54,17 +56,19 @@ while [ $# -gt 0 ]
 do
   case "$1" in
     --help|-?)     usage; exit;;
-    --dry-run)     DRY_RUN=true;        shift;;
-    --no-header)   HEADER=false;        shift;;
-    --delimiter)   DELIMITER="$2";      shift 2;;
-    --delimiter=*) DELIMITER="${1#*=}"; shift;;
-    --null)        NULL="$2";           shift 2;;
-    --null=*)      NULL="${1#*=}";      shift;;
-    --quote)       QUOTE="$2";          shift 2;;
-    --quote=*)     QUOTE="${1#*=}";     shift;;
-    --encoding)    ENCODING="$2";       shift 2;;
-    --encoding=*)  ENCODING="${1#*=}";  shift;;
-    *)             PSQL_ARGS+=("$1");   shift;;
+    --dry-run)     DRY_RUN=true;                     shift;;
+    --no-header)   HEADER=false;                     shift;;
+    --delimiter)   DELIMITER="$2";                   shift 2;;
+    --delimiter=*) DELIMITER="${1#*=}";              shift;;
+    --null)        NULL="$2";                        shift 2;;
+    --null=*)      NULL="${1#*=}";                   shift;;
+    --quote)       QUOTE="$2";      ESCAPE="$QUOTE"; shift 2;;
+    --quote=*)     QUOTE="${1#*=}"; ESCAPE="$QUOTE"; shift;;
+    --escape)      ESCAPE="$2";                      shift 2;;
+    --escape=*)    ESCAPE="${1#*=}";                 shift;;
+    --encoding)    ENCODING="$2";                    shift 2;;
+    --encoding=*)  ENCODING="${1#*=}";               shift;;
+    *)             PSQL_ARGS+=("$1");                shift;;
   esac
 done
 
@@ -88,6 +92,7 @@ FORMAT csv, \
 HEADER $HEADER, \
 DELIMITER '$(escape "$DELIMITER")', \
 QUOTE '$(escape "$QUOTE")', \
+ESCAPE '$(escape "$ESCAPE")', \
 NULL '$(escape "$NULL")', \
 ENCODING '$(escape "$ENCODING")'\
 )"
