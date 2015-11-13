@@ -60,12 +60,15 @@ do
   esac
 done
 
-if [ -t 0 ]; then # STDIN not open, thus the query is the last argument.
+if ! [ -t 0 ]; then
+  # STDIN is open, thus read query from STDIN.
+  QUERY=$(cat)
+fi
+if [ -z "$QUERY" ]; then
+  # STDIN was not open or was empty, thus the query is the last argument.
   [ ${#PSQL_ARGS} -eq 0 ] && usage && exit 1
   QUERY=${PSQL_ARGS[@]: -1}
   unset PSQL_ARGS[${#PSQL_ARGS[@]}-1]
-else # Read query from STDIN.
-  QUERY=$(cat)
 fi
 
 # Replace trailing semicolons. sed needs at least two lines with the given
