@@ -4,6 +4,14 @@
 
 ## Installation
 
+### Mac OS X
+
+psql2csv is available on [Homebrew](http://brew.sh/).
+
+    $ brew install psql2csv
+
+### Manual
+
 Grab the file `psql2csv`, put in somewhere in your `$PATH`, and make it
 executable:
 
