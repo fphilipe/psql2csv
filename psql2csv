@@ -21,6 +21,8 @@ function usage() {
   echo '  --force-quote=FORCE_QUOTE  set the columns to be force quoted; comma separated list of columns or * for all (default: none)'
   echo '  --encoding=ENCODING        set the output encoding; Excel likes latin1 (default: UTF8)'
   echo '  --no-header                do not output a header'
+  echo '  --timezone=TIMEZONE        set the timezone config before running the query'
+  echo '  --search-path=SEARCH_PATH  set the search_path config before running the query'
   echo '  --dry-run                  print the COPY statement that would be run without actually running it'
   echo
   echo 'Example usage:'
@@ -71,6 +73,10 @@ do
     --force-quote=*) FORCE_QUOTE="${1#*=}";            shift;;
     --encoding)      ENCODING="$2";                    shift 2;;
     --encoding=*)    ENCODING="${1#*=}";               shift;;
+    --timezone)      TIMEZONE="$2";                    shift 2;;
+    --timezone=*)    TIMEZONE="${1#*=}";               shift;;
+    --search-path)   SEARCH_PATH="$2";                 shift 2;;
+    --search-path=*) SEARCH_PATH="${1#*=}";            shift;;
     *)               PSQL_ARGS+=("$1");                shift;;
   esac
 done
@@ -119,6 +125,16 @@ fi
 # arguments, otherwise the query ends up empty.
 QUERY="$((echo "$QUERY"; echo) | sed -E -e ':a' -e 'N' -e '$!ba' -e '$s/([[:space:]]*;+[[:space:]]*)+$//')"
 COMMAND="COPY ($QUERY) TO STDOUT WITH ($OPTIONS)"
+
+# Only set the search_path parameter when it's specified.
+if ! [ -z "$SEARCH_PATH" ]; then
+  COMMAND="SET search_path TO $SEARCH_PATH;"$'\n'"$COMMAND"
+fi
+
+# Only set the timezone parameter when it's specified.
+if ! [ -z "$TIMEZONE" ]; then
+  COMMAND=$"SET timezone TO '$TIMEZONE';"$'\n'"$COMMAND"
+fi
 
 if [ "$DRY_RUN" = true ]; then
   echo "$COMMAND"
