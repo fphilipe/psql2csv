@@ -27,7 +27,7 @@ executable:
 The query is assumed to be the contents of STDIN, if present, or the last
 argument. All other arguments are forwarded to psql except for these:
 
-    -h, --help                 show this help, then exit
+    -?, --help                 show this help, then exit
     --delimiter=DELIMITER      set the field delimiter (default: ,)
     --quote=QUOTE              set the quote delimiter (default: ")
     --escape=ESCAPE            set the escape character (default: QUOTE)
@@ -35,6 +35,8 @@ argument. All other arguments are forwarded to psql except for these:
     --force-quote=FORCE_QUOTE  set the columns to be force quoted; comma separated list of columns or * for all (default: none)
     --encoding=ENCODING        set the output encoding; Excel likes latin1 (default: UTF8)
     --no-header                do not output a header
+    --timezone=TIMEZONE        set the timezone config before running the query
+    --search-path=SEARCH_PATH  set the search_path config before running the query
     --dry-run                  print the COPY statement that would be run without actually running it
 
 ## Example Usage
