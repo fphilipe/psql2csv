@@ -139,5 +139,5 @@ fi
 if [ "$DRY_RUN" = true ]; then
   echo "$COMMAND"
 else
-  psql --command="$COMMAND" ${PSQL_ARGS[@]}
+  psql --quiet --command="$COMMAND" ${PSQL_ARGS[@]}
 fi
