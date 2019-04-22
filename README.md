@@ -52,9 +52,36 @@ argument. All other arguments are forwarded to psql except for these:
     > LIMIT 10
     > sql
 
+## Advanced Usage
+
+Let's assume you have a script `monthly_report.sql` that you run every month.
+This script has a `WHERE` that limits the report to a certain month:
+
+    WHERE date_trunc('month', created_at) = '2019-01-01'
+
+Every time you run it you have to edit the script to change the month you want
+to run it for. Wouldn't it be nice to be able to specify a variable instead?
+
+Turns out psql does have support for [variables] which you can pass to psql (and
+thus to psql2csv) via `-v`, `--variable`, or `--set`. To interpolate the
+variable into the query you can use `:VAR` for the literal value, `:'VAR'` for
+the value as a string, or `:"VAR"` for the value as an identifier.
+
+Let's change the `WHERE` clause in `monthly_report.sql` file to use a variable
+instead:
+
+    WHERE date_trunc('month', created_at) = (:MONTH || '-01')::timestamptz
+
+With this change we can now run the query for any desired month as follows:
+
+    $ psql2csv -v MONTH=2019-02 < monthly_report.sql > data.csv
+
+[variables]: https://www.postgresql.org/docs/current/app-psql.html#APP-PSQL-VARIABLES
+
 ## Further Help
 
 - [PostgreSQL COPY documentation](http://www.postgresql.org/docs/current/static/sql-copy.html)
+- [psql variables](https://www.postgresql.org/docs/current/app-psql.html#APP-PSQL-VARIABLES)
 
 ## Author
 
