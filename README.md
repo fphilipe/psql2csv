@@ -70,7 +70,7 @@ the value as a string, or `:"VAR"` for the value as an identifier.
 Let's change the `WHERE` clause in `monthly_report.sql` file to use a variable
 instead:
 
-    WHERE date_trunc('month', created_at) = (:MONTH || '-01')::timestamptz
+    WHERE date_trunc('month', created_at) = (:'MONTH' || '-01')::timestamptz
 
 With this change we can now run the query for any desired month as follows:
 
